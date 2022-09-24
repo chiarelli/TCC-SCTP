@@ -1,8 +1,3 @@
-dist
-node_modules
-docker-compose.env
-docker-compose.yml
-Dockerfile
 .vscode
 .history
 .git

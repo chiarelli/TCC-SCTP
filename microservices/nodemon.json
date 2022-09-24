@@ -1,0 +1,7 @@
+{
+  "signal": "SIGHUP",
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["src/**/*.spec.ts"],
+  "exec": "ts-node ./src/main.ts"
+}

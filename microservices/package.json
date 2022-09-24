@@ -4,6 +4,7 @@
   "description": "Microsserviços do sistema - Consulta de termos pejorativos",
   "main": "dist/main.js",
   "scripts": {
+    "dev": "nodemon dist/main.js",
     "start": "node dist/main.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --fix"

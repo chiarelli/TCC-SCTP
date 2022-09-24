@@ -1,0 +1,21 @@
+version: "3.0"
+
+services:
+
+  auth:
+    build: .
+    env_file: docker-compose.env
+    environment:
+      NODEID: "node-dicid-auth"
+      SERVICES: auth
+  
+  nats:
+    image: nats
+
+  redis:
+    image: redis:alpine
+
+  mongo:
+    image: mongo
+    # volumes:
+    #   - ../../db:/data/db
