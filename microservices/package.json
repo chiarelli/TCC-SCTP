@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
+    "@types/hex-to-uuid": "^1.1.0",
     "@types/node": "^18.7.18",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
@@ -21,6 +22,11 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
-    "moleculer": "^0.14.23"
+    "hex-to-uuid": "^1.1.1",
+    "moleculer": "^0.14.23",
+    "moleculer-web": "^0.10.4",
+    "mongoose": "^6.6.1",
+    "nats": "^2.7.1",
+    "protobufjs": "^7.1.2"
   }
 }
