@@ -1,3 +1,4 @@
+import { Document } from "mongoose";
 import uuidToHex from "uuid-to-hex";
 import { CollectionUtilities } from "../../CollectionUtilities";
 import { PresentationOfCollections } from "../../interfaces";
@@ -27,7 +28,7 @@ export class WorkspaceModel {
         const model = await this.getOne(uuid);
         if(!model) return Promise.reject(null);
 
-        if(model.name !== name || model.email !== email) {
+        if(this.checkDiff(model, {name, email})) {
             await model.update({ name, email, updatedAt: new Date })
         }
         return this.getOne(uuid).then(model => model ? model : Promise.reject(null));
@@ -39,6 +40,14 @@ export class WorkspaceModel {
 
     async getAll(limit: number, offset: number): Promise<PresentationOfCollections> {
         return CollectionUtilities.find(Workspace, { status: Statuses.active }, limit, offset);
+    }
+
+    private checkDiff(model: Document, comp: { [s: string]: unknown; } | ArrayLike<unknown>): boolean {
+        const data = <any>model.toJSON();
+        for (const [key, value] of Object.entries(comp)) {
+            if(value && data[key] !== value) return true;
+        }
+        return false;
     }
 
 }
