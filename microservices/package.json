@@ -4,8 +4,8 @@
   "description": "Microsserviços do sistema - Consulta de termos pejorativos",
   "main": "dist/main.js",
   "scripts": {
-    "dev": "nodemon dist/main.js",
-    "start": "node dist/main.js",
+    "dev": "exec nodemon dist/main.js",
+    "start": "exec node dist/main.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --fix"
   },
@@ -13,8 +13,11 @@
   "license": "ISC",
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
+    "@types/bcryptjs": "^2.4.2",
     "@types/hex-to-uuid": "^1.1.0",
     "@types/node": "^18.7.18",
+    "@types/uuid": "^8.3.4",
+    "@types/uuid-to-hex": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "eslint": "^8.23.1",
@@ -22,11 +25,15 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cbor-x": "^1.4.1",
+    "generate-password": "^1.7.0",
     "hex-to-uuid": "^1.1.1",
     "moleculer": "^0.14.23",
     "moleculer-web": "^0.10.4",
     "mongoose": "^6.6.1",
-    "nats": "^2.7.1"
+    "nats": "^2.7.1",
+    "uuid": "^9.0.0",
+    "uuid-to-hex": "^1.1.1"
   }
 }
