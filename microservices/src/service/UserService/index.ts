@@ -1,6 +1,7 @@
 import { ServiceBroker } from 'moleculer';
 import { Microservice } from '../interfaces';
 import { connect } from '../mongodb-conn';
+import { WorkspaceCtrlSingleton } from './user-factories';
 
 export class UserService implements Microservice {
 
@@ -10,15 +11,17 @@ export class UserService implements Microservice {
         // Connect MongoDB
         await connect();
 
+        const wksCrtl = WorkspaceCtrlSingleton.getInstance();
+        
         // Define a service
         this.broker.createService({
             name: 'user',
             actions: {
-                // createWorkspace: ctx => wksCrtl.create(ctx),
-                // updateWorkspace: ctx => wksCrtl.update(ctx),
-                // deleteWorkspace: ctx => wksCrtl.delete(ctx),
-                // getWorkspace   : ctx => wksCrtl.getOne(ctx),
-                // getAllWorkspace: ctx => wksCrtl.getAll(ctx),
+                createWorkspace: ctx => wksCrtl.create(ctx),
+                updateWorkspace: ctx => wksCrtl.update(ctx),
+                deleteWorkspace: ctx => wksCrtl.delete(ctx),
+                getWorkspace   : ctx => wksCrtl.getOne(ctx),
+                getAllWorkspace: ctx => wksCrtl.getAll(ctx),
             }
         });
         
