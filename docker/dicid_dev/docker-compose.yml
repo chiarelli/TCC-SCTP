@@ -1,0 +1,42 @@
+version: "3.0"
+
+services:
+
+  api:
+    build:
+      context: ../..
+      dockerfile: ./docker/dicid_dev/Dockerfile
+    env_file: .env
+    environment:
+      NODEID: "dicid-api"
+      SERVICES: api
+    ports:
+      - 3000:3000
+    volumes:
+      - ../../microservices:/app
+    stop_signal: SIGINT
+ 
+  user:
+    build:
+      context: ../..
+      dockerfile: ./docker/dicid_dev/Dockerfile
+    env_file: .env
+    environment:
+      NODEID: "dicid-user"
+      SERVICES: user
+    volumes:
+      - ../../microservices:/app
+    stop_signal: SIGINT
+
+  nats:
+    image: nats
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
