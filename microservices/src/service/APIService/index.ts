@@ -31,7 +31,7 @@ export class APIService implements Microservice {
                     aliases: {
                         // Resource workspace routers
                         'POST workspace': 'api.createWorkspace',
-                        'PUT workspace/:id': 'api.updateWorkspace',
+                        'PATCH workspace/:id': 'api.updateWorkspace',
                         'DELETE workspace/:id': 'api.deleteWorkspace',
                         'GET workspace/:id': 'api.getWorkspace',
                         'GET workspace': 'api.getAllWorkspace',
