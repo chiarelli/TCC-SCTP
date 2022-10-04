@@ -9,9 +9,22 @@ export class ServiceBrokerDefaultFactory {
             transporter: process.env.TRANSPORTER || '',
             serializer: process.env.SERIALIZER || '',
             logLevel: <LogLevels>(process.env.LOGLEVEL || ''),
-            requestTimeout: 5 * 1000,
+            requestTimeout: 2 * 1000,
+            // hotReload: true,
             tracking: {
                 enabled: true,
+            },
+            // heartbeatTimeout: 50,
+            // heartbeatInterval: 20,
+            dependencyInterval: 100,
+            retryPolicy: {
+                enabled: true,
+                retries: 5,
+                delay: 100,
+                maxDelay: 2*1000,
+                factor: 2,
+                // @ts-ignore: Unreachable code error
+                check: err => err && !!err.retryable
             }
         });
     }

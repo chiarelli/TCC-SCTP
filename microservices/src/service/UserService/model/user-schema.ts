@@ -4,7 +4,9 @@ import { AbstractShema } from '../../AbstractShema';
 
 const config = { discriminatorKey: 'kind' };
 
-export interface IUser extends IModel {
+export interface IUser extends IModel, Required<{
+    _id: Types.ObjectId;
+}> {
     name: string,
     email: string,
     status: Statuses,
@@ -30,7 +32,11 @@ export const UserSchema = new Schema<IUser>({
 
 const AbstractUser = model<IUser>('User', UserSchema);
 
-export type WorkspaceType = Document<unknown, any, IUser> & IUser;
+export type ModelUserType = typeof AbstractUser;
+
+export type DocumentUserType = Document<unknown, any, IUser> & IUser;
+
+export type DocumentWorkspaceType = Document<unknown, any, IUser> & IUser;
 
 export const Workspace = AbstractUser.discriminator<IUser>(UserTypes.workspace, UserSchema);
 

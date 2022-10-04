@@ -1,5 +1,5 @@
 import { Context } from "../../interfaces";
-import { WorkspaceType } from "../model/user-schema";
+import { DocumentUserType } from "../model/user-schema";
 import { WorkspaceModel } from "../model/WokspaceModel";
 
 export class WorkspaceController {
@@ -23,7 +23,7 @@ export class WorkspaceController {
     async getAll(ctx: Context) {
         return this.ctrl.getAll(ctx.params.limit, ctx.params.offset)
             .then(result => {
-                result.items = result.items.map( model => this.export(<WorkspaceType><unknown>model) );
+                result.items = result.items.map( model => this.export(<DocumentUserType>model) );
                 return result;
             })
     }
@@ -33,7 +33,7 @@ export class WorkspaceController {
             .then(model => this.export(model));
     }
 
-    private export(model: WorkspaceType|null) {
+    private export(model: DocumentUserType|null) {
         if(!model) return false;
 
         const data = <any>model.toJSON();
