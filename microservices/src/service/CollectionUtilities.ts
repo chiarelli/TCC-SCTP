@@ -9,7 +9,7 @@ export class CollectionUtilities {
         limit: number = 20, 
         offset: number = 0, 
         sort: Sort  = { createdAt: 'descending'}
-            ): Promise<PresentationOfCollections> {                    
+            ): Promise<PresentationOfCollections<any>> {                    
 
         const schema = model.find(query);
         const _query = schema.toConstructor();
@@ -29,7 +29,7 @@ export class CollectionUtilities {
         total: number, 
         limit: number, 
         offset: number 
-            ): PresentationOfCollections {
+            ): PresentationOfCollections<any> {
         return { offset, limit, query_total: total, length: items.length, items };
     }
 }

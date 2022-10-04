@@ -1,5 +1,5 @@
 import { Context as BaseContext, GenericObject, ServiceBroker } from "moleculer";
-import { Document, Model, SortOrder, Types } from "mongoose";
+import { Document, SortOrder, Types } from "mongoose";
 
 export interface Microservice {
     register(): Promise<void>;
@@ -22,10 +22,10 @@ export interface IModel {
 
 export type Sort = { [key: string]: SortOrder | { $meta: 'textScore' } }
 
-export type PresentationOfCollections = {
+export type PresentationOfCollections<T> = {
     offset: number;
     limit: number;
     query_total: number;
     length: number;
-    items: Document[];
+    items: (Document<unknown, any, T> & T)[];
 };
