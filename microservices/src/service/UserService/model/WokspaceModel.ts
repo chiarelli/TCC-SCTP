@@ -1,7 +1,7 @@
 import { AbstractModel } from "./AbstractModel";
-import { Workspace } from "./user-schema";
+import { IUser, Workspace } from "./user-schema";
 
-export class WorkspaceModel extends AbstractModel {
+export class WorkspaceModel extends AbstractModel<IUser> {
 
     constructor() {
         super(Workspace);
