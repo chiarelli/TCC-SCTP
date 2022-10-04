@@ -4,9 +4,7 @@ import { AbstractShema } from '../../AbstractShema';
 
 const config = { discriminatorKey: 'kind' };
 
-export interface IUser extends IModel, Required<{
-    _id: Types.ObjectId;
-}> {
+export interface IUser extends IModel {
     name: string,
     email: string,
     status: Statuses,
@@ -36,15 +34,15 @@ export type ModelUserType = typeof AbstractUser;
 
 export type DocumentUserType = Document<unknown, any, IUser> & IUser;
 
-export type DocumentWorkspaceType = Document<unknown, any, IUser> & IUser;
+export type DocumentWorkspaceType = DocumentUserType;
 
 export const Workspace = AbstractUser.discriminator<IUser>(UserTypes.workspace, UserSchema);
 
-export type AdminType = Document<unknown, any, IUser> & IUser;
+export type DocumentAdminType = DocumentUserType;
 
 export const Admin = AbstractUser.discriminator<IUser>(UserTypes.admin, UserSchema);
 
-interface IConsumer extends IUser {
+export interface IConsumer extends IUser {
     workspace: typeof Types.ObjectId,
 }
 
@@ -52,6 +50,6 @@ const ConsumerSchema = new Schema<IConsumer>({
     workspace: { ref: 'User', type: Types.ObjectId, required: true }
 }, config);
 
-export type ConsumerType = Document<unknown, any, IConsumer> & IConsumer;
+export type DocumentConsumerType = DocumentUserType & IConsumer;
 
 export const Consumer = AbstractUser.discriminator<IConsumer>(UserTypes.consumer, ConsumerSchema);

@@ -23,8 +23,9 @@ export class WorkspaceController {
     async getAll(ctx: Context) {
         return this.ctrl.getAll(ctx.params.limit, ctx.params.offset)
             .then(result => {
-                result.items = result.items.map( model => this.export(<DocumentUserType>model) );
-                return result;
+                const data = Object.assign(result);
+                data.items = result.items.map( model => this.export(model) );
+                return data;
             })
     }
 
@@ -33,7 +34,7 @@ export class WorkspaceController {
             .then(model => this.export(model));
     }
 
-    private export(model: DocumentUserType|null) {
+    private export(model: DocumentUserType | null) {
         if(!model) return false;
 
         const data = <any>model.toJSON();
