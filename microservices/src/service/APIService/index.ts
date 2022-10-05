@@ -20,10 +20,7 @@ export class APIService implements Microservice {
             mixins: [web],
             actions: {
                 createWorkspace: ctx => apiCtrl.createWorkspace(ctx),
-                updateWorkspace: ctx => apiCtrl.updateWorkspace(ctx),
                 deleteWorkspace: ctx => apiCtrl.deleteWorkspace(ctx),
-                getWorkspace: ctx => apiCtrl.getWorkspace(ctx),
-                getAllWorkspace: ctx => apiCtrl.getAllWorkspace(ctx),
             },
             settings: {
                 routes: [{
@@ -31,10 +28,10 @@ export class APIService implements Microservice {
                     aliases: {
                         // Resource workspace routers
                         'POST workspace': 'api.createWorkspace',
-                        'PATCH workspace/:id': 'api.updateWorkspace',
+                        'PATCH workspace/:id': 'user.updateWorkspace',
                         'DELETE workspace/:id': 'api.deleteWorkspace',
-                        'GET workspace/:id': 'api.getWorkspace',
-                        'GET workspace': 'api.getAllWorkspace',
+                        'GET workspace/:id': 'user.getWorkspace',
+                        'GET workspace': 'user.getAllWorkspace',
                     }
                 }]
             }
