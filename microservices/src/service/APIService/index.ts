@@ -21,6 +21,8 @@ export class APIService implements Microservice {
             actions: {
                 createWorkspace: ctx => apiCtrl.createWorkspace(ctx),
                 deleteWorkspace: ctx => apiCtrl.deleteWorkspace(ctx),
+                createAdmin: ctx => apiCtrl.createAdmin(ctx),
+                deleteAdmin: ctx => apiCtrl.deleteAdmin(ctx),
             },
             settings: {
                 routes: [{
@@ -32,6 +34,13 @@ export class APIService implements Microservice {
                         'DELETE workspace/:id': 'api.deleteWorkspace',
                         'GET workspace/:id': 'user.getWorkspace',
                         'GET workspace': 'user.getAllWorkspace',
+
+                        // Resource admin routers
+                        'POST admin': 'api.createAdmin',
+                        'PATCH admin/:id': 'user.updateAdmin',
+                        'DELETE admin/:id': 'api.deleteAdmin',
+                        'GET admin/:id': 'user.getAdmin',
+                        'GET admin': 'user.getAllAdmin',
                     }
                 }]
             }
