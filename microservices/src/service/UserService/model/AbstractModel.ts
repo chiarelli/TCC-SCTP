@@ -28,25 +28,31 @@ export abstract class AbstractModel<T> {
 
     async softDelete(uuid: string): Promise<AbsDoc<T>> {
         const model = await this.getOne(uuid);
-        if(!model) throw new Error("not_found");
+        if(!model) return Promise.reject(new Error("not_found"));
         return model.update({ status: Statuses.inactive });
     }
 
     async update(uuid: string, args: IUser): Promise<AbsDoc<T> | null> {
         const { name, email } = args;
         const model = await this.getOne(uuid);
-        if(!model) return Promise.reject(null);
+        if(!model) return Promise.reject(new Error("not_found"));
+        
+        const comp = new this.Model(Object.assign( {}, model.toObject(), args ) );
+        let isEquals = true;
+               
+        Object.entries(model.toObject()).forEach(([key, value]) => {
+            let obj = <any>comp.toObject();
+            let data = <any>value;
 
-        if(this.checkDiff(model, Object.assign(args))) {
-            this.prepareUpdate(<any>model, args);
-            await model.update({ updatedAt: new Date })
-        }
+            if( obj[key] != data?.toString() ) {
+                isEquals = false;
+                return isEquals;
+            }
+        });
+
+        if( !isEquals ) await model.update({ ...args, updatedAt: new Date });
+
         return this.getOne(uuid).then(model => model ? model : Promise.reject(null));
-    }
-
-    prepareUpdate(model: DocumentUserType, args: IUser): void {
-        model.name = args.name;
-        model.email = args.email;
     }
 
     async getOne(uuid: string): Promise<AbsDoc<T> | null> {
@@ -55,14 +61,6 @@ export abstract class AbstractModel<T> {
 
     async getAll(limit: number, offset: number): Promise<PresentationOfCollections<AbsDoc<T>>> {
         return CollectionUtilities.find(this.Model, { status: Statuses.active }, limit, offset);
-    }
-
-    protected checkDiff(model: Document, comp: { [s: string]: unknown; } | ArrayLike<unknown>): boolean {
-        const data = <any>model.toJSON();
-        for (const [key, value] of Object.entries(comp)) {
-            if(value && data[key] !== value) return true;
-        }
-        return false;
     }
 
 }
