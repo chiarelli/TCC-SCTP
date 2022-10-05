@@ -1,5 +1,5 @@
 import { Context as BaseContext, GenericObject, ServiceBroker } from "moleculer";
-import { Document, SortOrder, Types } from "mongoose";
+import { SortOrder, Types } from "mongoose";
 
 export interface Microservice {
     register(): Promise<void>;
@@ -27,5 +27,5 @@ export type PresentationOfCollections<T> = {
     limit: number;
     query_total: number;
     length: number;
-    items: (Document<unknown, any, T> & T)[];
+    items: T[];
 };

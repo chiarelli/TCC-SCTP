@@ -1,4 +1,4 @@
-import { Document, Model } from "mongoose";
+import { Model } from "mongoose";
 import { PresentationOfCollections, Sort } from "./interfaces";
 
 export class CollectionUtilities {
@@ -25,7 +25,7 @@ export class CollectionUtilities {
     }
 
     static presentationOfCollections(
-        items: Document[], 
+        items: any[], 
         total: number, 
         limit: number, 
         offset: number 
