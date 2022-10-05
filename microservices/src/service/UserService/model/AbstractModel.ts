@@ -3,9 +3,9 @@ import uuidToHex from "uuid-to-hex";
 import { CollectionUtilities } from "../../CollectionUtilities";
 import { PresentationOfCollections } from "../../interfaces";
 import { UUID_Utilities } from "../../UUID_Utilities";
+import { AbsDoc } from "../interfaces";
 import { DocumentUserType, IUser, Statuses } from "./user-schema";
 
-export type AbsDoc<T> = Document<unknown, any, T> & T;
 
 export abstract class AbstractModel<T> {
     constructor(private Model: Model<T>) {};
@@ -53,7 +53,7 @@ export abstract class AbstractModel<T> {
         return this.Model.findOne({ uuid: UUID_Utilities.uuidToBuffer(uuid), status: Statuses.active })
     }
 
-    async getAll(limit: number, offset: number): Promise<PresentationOfCollections<T>> {
+    async getAll(limit: number, offset: number): Promise<PresentationOfCollections<AbsDoc<T>>> {
         return CollectionUtilities.find(this.Model, { status: Statuses.active }, limit, offset);
     }
 
