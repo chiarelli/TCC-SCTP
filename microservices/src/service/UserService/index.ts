@@ -1,22 +1,23 @@
 import { ServiceBroker } from 'moleculer';
-import { Microservice } from '../interfaces';
+import { Context, Microservice } from '../interfaces';
 import { connect } from '../mongodb-conn';
 import { AdminCtrlSingleton, WorkspaceCtrlSingleton } from './user-factories';
 
 export class UserService implements Microservice {
 
     constructor(private broker: ServiceBroker) { }
-    
+
     async register() {
         // Connect MongoDB
         await connect();
 
         const wksCrtl = WorkspaceCtrlSingleton.getInstance();
         const adminCtrl = AdminCtrlSingleton.getInstance();
-        
+
         // Define a service
         this.broker.createService({
             name: 'user',
+
             actions: {
                 // Resource workspace actions
                 createWorkspace: ctx => wksCrtl.create(ctx),
@@ -24,7 +25,7 @@ export class UserService implements Microservice {
                 deleteWorkspace: ctx => wksCrtl.delete(ctx),
                 getWorkspace   : ctx => wksCrtl.getOne(ctx),
                 getAllWorkspace: ctx => wksCrtl.getAll(ctx),
-                
+
                 // Resource admin actions
                 createAdmin: ctx => adminCtrl.create(ctx),
                 updateAdmin: ctx => adminCtrl.update(ctx),
@@ -33,7 +34,7 @@ export class UserService implements Microservice {
                 getAllAdmin: ctx => adminCtrl.getAll(ctx),
             }
         });
-        
+
         // graceful shutdown service
         process.on('SIGINT', async () => {
             console.log(`##### graceful shutdown service ${this.broker.nodeID}`);

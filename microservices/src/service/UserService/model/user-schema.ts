@@ -1,25 +1,9 @@
 import { Document, model, Schema, Types } from 'mongoose';
-import { IModel } from '../../interfaces';
 import { AbstractShema } from '../../AbstractShema';
+import { Statuses, UserTypes } from '../../enums';
+import { IUser } from '../../interfaces';
 
 const config = { discriminatorKey: 'kind' };
-
-export interface IUser extends IModel {
-    name: string,
-    email: string,
-    status: Statuses,
-}
-
-export enum Statuses {
-    active = 'active', 
-    inactive = 'inactive'
-}
-
-export enum UserTypes {
-    admin = 'admin',
-    workspace = 'workspace',
-    consumer = 'consumer',
-}
 
 export const UserSchema = new Schema<IUser>({
     ...AbstractShema.obj,

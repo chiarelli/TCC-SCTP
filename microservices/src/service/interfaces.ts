@@ -1,5 +1,6 @@
 import { Context as BaseContext, GenericObject, ServiceBroker } from "moleculer";
 import { SortOrder, Types } from "mongoose";
+import { Statuses, UserTypes } from "./enums";
 
 export interface Microservice {
     register(): Promise<void>;
@@ -11,7 +12,14 @@ export type AvailableServices = {
     [key: string]: MicroserviceConstructor
 }
 
-export type Context = BaseContext<any, any, GenericObject>
+export interface IUser extends IModel {
+    name: string,
+    email: string,
+    status: Statuses,
+    kind: UserTypes,
+}
+
+export type Context = BaseContext<any, any, GenericObject> & { user?: IUser }
 
 export interface IModel {
     _id: Types.ObjectId;
@@ -29,3 +37,12 @@ export type PresentationOfCollections<T> = {
     length: number;
     items: T[];
 };
+
+type Actions = 'createOwn' | 'readOwn' | 'updateOwn' | 'deleteOwn' | 'createAny' | 'readAny' | 'updateAny' | 'deleteAny';
+
+export type Capabilities = {
+    role: string,
+    actions: Actions | Actions[],
+    resource: string,
+    relation?: 'AND' | 'OR'
+}

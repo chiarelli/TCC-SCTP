@@ -1,14 +1,16 @@
-import { Document, Model } from "mongoose";
+import { Model } from "mongoose";
 import uuidToHex from "uuid-to-hex";
 import { CollectionUtilities } from "../../CollectionUtilities";
-import { PresentationOfCollections } from "../../interfaces";
+import { Statuses } from "../../enums";
+import { Context, IUser, PresentationOfCollections } from "../../interfaces";
 import { UUID_Utilities } from "../../UUID_Utilities";
 import { AbsDoc } from "../interfaces";
-import { DocumentUserType, IUser, Statuses } from "./user-schema";
 
 
 export abstract class AbstractModel<T> {
     constructor(private Model: Model<T>) {};
+
+    abstract checkPermission(ctx: Context): Promise<void>;
 
     async create(args: IUser): Promise<AbsDoc<T>> {
         const model = this.prepareCreate(args);
@@ -22,7 +24,7 @@ export abstract class AbstractModel<T> {
             model.uuid = Buffer.from( uuidToHex(UUID_Utilities.generateUUIDv5(model._id.toString(), undefined)), 'hex' );
             model.createdAt = new Date;
             model.updatedAt = new Date;
-            model.status = Statuses.active; 
+            model.status = Statuses.active;
         return <AbsDoc<T>>model;
     }
 
@@ -36,10 +38,10 @@ export abstract class AbstractModel<T> {
         const { name, email } = args;
         const model = await this.getOne(uuid);
         if(!model) return Promise.reject(new Error("not_found"));
-        
+
         const comp = new this.Model(Object.assign( {}, model.toObject(), args ) );
         let isEquals = true;
-               
+
         Object.entries(model.toObject()).forEach(([key, value]) => {
             let obj = <any>comp.toObject();
             let data = <any>value;
