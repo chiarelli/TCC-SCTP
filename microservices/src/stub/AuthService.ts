@@ -1,5 +1,5 @@
 import { ServiceBroker } from "moleculer";
-import { Capabilities } from "../service/interfaces";
+import { Capabilities, IToken, ResultDelete } from "../service/interfaces";
 
 /**
  * Classe stub de AuthService
@@ -10,6 +10,14 @@ export class AuthService {
 
     async checkPermission(cap: Capabilities): Promise<boolean> {
         return this.broker.call('auth.checkPermission', cap);
+    }
+
+    async createToken({ owner }: Partial<IToken>): Promise<IToken> {
+        return this.broker.call('auth.createToken', { owner });
+    }
+
+    async deleteOwnerTokens({ owner }: Partial<IToken>): Promise<ResultDelete> {
+        return this.broker.call('auth.deleteOwnerTokens', { owner });
     }
 
 }
