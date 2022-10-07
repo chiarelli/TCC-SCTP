@@ -5,9 +5,7 @@ import { IModel } from './interfaces';
 export const AbstractShema = new Schema<IModel>({
     uuid: { type: Buffer, immutable: true, unique: true, required: true,
 
-        get: function (buffer: Buffer) {
-            return hexToUuid( buffer.toString('hex') );
-        }
+        get: (buffer: Buffer) => hexToUuid( buffer.toString('hex') )
     },
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date, default: Date.now, required: true },
