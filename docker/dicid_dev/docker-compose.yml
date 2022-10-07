@@ -15,7 +15,19 @@ services:
     volumes:
       - ../../microservices:/app
     stop_signal: SIGINT
- 
+
+  auth:
+    build:
+      context: ../..
+      dockerfile: ./docker/dicid_dev/Dockerfile
+    env_file: .env
+    environment:
+      NODEID: "dicid-auth"
+      SERVICES: auth
+    volumes:
+      - ../../microservices:/app
+    stop_signal: SIGINT
+
   user:
     build:
       context: ../..
