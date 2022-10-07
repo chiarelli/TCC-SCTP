@@ -20,4 +20,8 @@ export class AuthService {
         return this.broker.call('auth.deleteOwnerTokens', { owner });
     }
 
+    async checkTokenValid(token: string): Promise<IToken | never> {
+        return this.broker.call('auth.checkTokenValid', {token});
+    }
+
 }
