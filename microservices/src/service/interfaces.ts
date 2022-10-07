@@ -24,7 +24,6 @@ export interface IUser extends IModel {
     email: string,
     status: Statuses,
     kind: UserTypes,
-    tokens: Buffer[]
 }
 
 export interface IToken extends IModel {
