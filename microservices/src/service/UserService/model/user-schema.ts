@@ -15,8 +15,6 @@ export const UserSchema = new Schema<IUser>({
 
 export const AbstractUser = model<IUser>('User', UserSchema);
 
-export type ModelUserType = typeof AbstractUser;
-
 export type DocumentUserType = Document<unknown, any, IUser> & IUser;
 
 export type DocumentWorkspaceType = DocumentUserType;
