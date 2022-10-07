@@ -10,9 +10,10 @@ export const UserSchema = new Schema<IUser>({
     name: { type: String, required: true },
     email: { type: String, unique: true, required: true },
     status: { type: String, required: true, enum: Object.values(Statuses) },
+    // tokens: [ AbstractShema.obj.uuid ],
 }, config);
 
-const AbstractUser = model<IUser>('User', UserSchema);
+export const AbstractUser = model<IUser>('User', UserSchema);
 
 export type ModelUserType = typeof AbstractUser;
 
