@@ -3,7 +3,7 @@ import { Document, model, Schema } from "mongoose";
 import { AbstractShema } from '../../AbstractShema';
 import { IToken } from "../../interfaces";
 
-export type TokenModelType = Document<unknown, any, IToken> & IToken;
+export type DocumentTokenType = Document<unknown, any, IToken> & IToken;
 
 export const TokenSchema = new Schema<IToken>({
     ...AbstractShema.obj,
