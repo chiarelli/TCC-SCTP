@@ -2,6 +2,7 @@ import { AvailableServices, MicroserviceConstructor } from './service/interfaces
 import { APIService } from './service/APIService';
 import { ServiceBrokerDefaultFactory as brokerDefault } from './service/factories';
 import { UserService } from './service/UserService';
+import { AuthService } from './service/AuthService';
 
 class Services {
 
@@ -9,11 +10,12 @@ class Services {
 
   static readonly availableServices: AvailableServices = {
     api: APIService,
-    user: UserService
+    user: UserService,
+    auth: AuthService,
   }
-  
+
   private services: Array<Function> = [];
-  
+
   addService(serviceClass: MicroserviceConstructor) {
     this.services.push(() => (new serviceClass(brokerDefault.getNewInstance())).register());
   }
