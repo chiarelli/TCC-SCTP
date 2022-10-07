@@ -1,7 +1,7 @@
 import bcryptjs from "bcryptjs";
 import generator from 'generate-password';
 import uuidToHex from 'uuid-to-hex';
-import { Token, TokenModelType } from "./token-schema";
+import { Token, DocumentTokenType } from "./token-schema";
 import { UUID_Utilities } from "../../UUID_Utilities";
 import { IToken } from "../../interfaces";
 
@@ -10,19 +10,25 @@ const TOKEN_MIN = parseInt(new String(process.env.TOKEN_MIN).toString() || '71')
 
 export class TokenModel {
 
-    async valid(token_uuid: string, plain_text: string): Promise<boolean> {
-        const auth = await this.getOne(token_uuid);
-        return bcryptjs.compare(plain_text, auth && auth.hash || '');
+    async valid(token: string): Promise<DocumentTokenType|false> {
+        const [uuid, text] = token.split('.');
+        const auth = await this.getOne(uuid);
+
+        if(!auth || !await bcryptjs.compare(text || '', auth && auth.hash || '')) return false;
+
+        return auth;
     }
 
-    async create({ owner }: Partial<IToken>): Promise<TokenModelType> {
+    async create({ owner }: Partial<IToken>): Promise<DocumentTokenType> {
         const plain_text = generatePassword(TOKEN_MAX, TOKEN_MIN);
         const token = new Token;
-            token.uuid = Buffer.from( uuidToHex(UUID_Utilities.generateUUIDv5(token._id.toString(), undefined)), 'hex' );
+        const uuid = uuidToHex(UUID_Utilities.generateUUIDv5(token._id.toString(), undefined));
+
+            token.uuid = Buffer.from( uuid, 'hex' );
             token.createdAt = new Date;
             token.updatedAt = new Date;
             token.hash = await TokenModel.generateToken(plain_text);
-            token._token = plain_text;
+            token._token = `${uuid}.${plain_text}`;
             owner instanceof Buffer ? token.owner = owner : null;
         return token.save();
     }
@@ -35,7 +41,7 @@ export class TokenModel {
         return Token.find({ owner }).remove().exec();
     }
 
-    async getOne(token_uuid: string): Promise<TokenModelType|null> {
+    async getOne(token_uuid: string): Promise<DocumentTokenType|null> {
         return Token.findOne({'uuid': UUID_Utilities.uuidToBuffer(token_uuid) });
     }
 
