@@ -1,16 +1,22 @@
 import { Model } from "mongoose";
 import uuidToHex from "uuid-to-hex";
+import { stubs } from "..";
+import { ServiceError } from "../../../error/ServiceError";
 import { CollectionUtilities } from "../../CollectionUtilities";
 import { Statuses } from "../../enums";
-import { Context, IUser, PresentationOfCollections } from "../../interfaces";
+import { IUser, Permission, PresentationOfCollections } from "../../interfaces";
 import { UUID_Utilities } from "../../UUID_Utilities";
 import { AbsDoc } from "../interfaces";
-
+import { DocumentUserType } from "./user-schema";
 
 export abstract class AbstractModel<T> {
-    constructor(private Model: Model<T>) {};
+    protected stubs: typeof stubs;
 
-    abstract checkPermission(ctx: Context): Promise<void>;
+    constructor(protected Model: Model<T>) {
+        this.stubs = stubs;
+    };
+
+    abstract checkPermission(permision: Permission): Promise<boolean>;
 
     async create(args: IUser): Promise<AbsDoc<T>> {
         const model = this.prepareCreate(args);
@@ -18,7 +24,7 @@ export abstract class AbstractModel<T> {
     }
 
     protected  prepareCreate({name, email}: IUser): AbsDoc<T> {
-        const model = <any>new this.Model();
+        const model = <DocumentUserType><unknown>new this.Model();
             model.name = name;
             model.email = email;
             model.uuid = Buffer.from( uuidToHex(UUID_Utilities.generateUUIDv5(model._id.toString(), undefined)), 'hex' );
@@ -30,14 +36,13 @@ export abstract class AbstractModel<T> {
 
     async softDelete(uuid: string): Promise<AbsDoc<T>> {
         const model = await this.getOne(uuid);
-        if(!model) return Promise.reject(new Error("not_found"));
+        if(!model) return Promise.reject(new ServiceError("not_found", 404));
         return model.update({ status: Statuses.inactive });
     }
 
     async update(uuid: string, args: IUser): Promise<AbsDoc<T> | null> {
-        const { name, email } = args;
         const model = await this.getOne(uuid);
-        if(!model) return Promise.reject(new Error("not_found"));
+        if(!model) return Promise.reject(new ServiceError("not_found", 404));
 
         const comp = new this.Model(Object.assign( {}, model.toObject(), args ) );
         let isEquals = true;
@@ -57,8 +62,10 @@ export abstract class AbstractModel<T> {
         return this.getOne(uuid).then(model => model ? model : Promise.reject(null));
     }
 
-    async getOne(uuid: string): Promise<AbsDoc<T> | null> {
-        return this.Model.findOne({ uuid: UUID_Utilities.uuidToBuffer(uuid), status: Statuses.active })
+    async getOne(uuid: string): Promise<AbsDoc<T>> {
+        const model = await this.Model.findOne({ uuid: UUID_Utilities.uuidToBuffer(uuid), status: Statuses.active })
+        if(!model) return Promise.reject(new ServiceError("not_found", 404));
+        return <AbsDoc<T>>model;
     }
 
     async getAll(limit: number, offset: number): Promise<PresentationOfCollections<AbsDoc<T>>> {
