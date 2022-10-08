@@ -28,6 +28,15 @@ export class UserService implements Microservice {
         this.broker.createService({
             name: 'user',
 
+            hooks: {
+
+                before: {
+                    '*': [ (ctx: Context) => ctx.user = ctx.meta.user ],
+                    '*Workspace': [ (ctx: Context) => wksCrtl.checkPermission(ctx) ],
+                    // '*Admin': [ (ctx: Context) => adminCtrl.checkPermission(ctx) ],
+                }
+            },
+
             actions: {
                 // Resource workspace actions
                 createWorkspace: ctx => wksCrtl.create(ctx),
