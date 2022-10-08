@@ -5,15 +5,20 @@ export class PermissionModel {
 
     async check({ role, actions, relation }: Capabilities): Promise<boolean> {
         actions = Array.isArray(actions) ? actions : [actions];
-        let result = relation === 'OR' ? false : true;
+        var result = false;
+        var _relation = relation === undefined ? 'AND' : relation;
 
         actions.forEach(action => {
-            if(ac.can(role)[action.name](action.resource).granted == result) {
-                result = !result;
+            // console.log('##### granted ==> ', ac.can(role)[action.name](action.resource).granted );
+            result = ac.can(role)[action.name](action.resource).granted;
+
+            if(_relation === 'OR' && result || _relation === 'AND' && !result) {
                 return false;
             }
+
         });
-        // console.log('##### RESULT FINAL ==> ', result )
+        // console.log('##### RESULT FINAL ==> ', result );
+        // console.log({ role, actions, _relation })
         return result;
     }
 

@@ -21,8 +21,7 @@ export class AuthService implements Microservice {
             actions: {
                 checkTokenValid: {
                     params: {
-                        token_uuid: 'string',
-                        plain_text: 'string',
+                        token: 'string',
 
                     },
                     handler: ctx => tokenCtrl.checkValid(ctx)
@@ -42,8 +41,7 @@ export class AuthService implements Microservice {
                 checkPermission: {
                     params: {
                         role: 'string',
-                        actions: 'string',
-                        resource: 'string',
+                        actions: 'any',
                         relation: 'string|optional'
                     },
                     handler: ctx => permCtrl.check(ctx),
