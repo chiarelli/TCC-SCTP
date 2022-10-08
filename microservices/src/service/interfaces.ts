@@ -56,7 +56,7 @@ export type Capabilities = {
 }
 
 export type Permission = {
-    actions: string | string[],
+    action: string,
     loggedIn?: IUser,
     params: {
         [key: string]: string|number|boolean
