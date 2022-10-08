@@ -2,7 +2,7 @@ import { ServiceBroker } from 'moleculer';
 import { AuthService } from '../../stub/AuthService';
 import { Context, Microservice } from '../interfaces';
 import { connect } from '../mongodb-conn';
-import { AdminCtrlSingleton, WorkspaceCtrlSingleton } from './user-factories';
+import { AdminCtrlSingleton, UserCtrlSingleton, WorkspaceCtrlSingleton } from './user-factories';
 
 export var stubs: {
     authService: AuthService,
@@ -23,6 +23,7 @@ export class UserService implements Microservice {
 
         const wksCrtl = WorkspaceCtrlSingleton.getInstance();
         const adminCtrl = AdminCtrlSingleton.getInstance();
+        const userCtrl = UserCtrlSingleton.getInstance();
 
         // Define a service
         this.broker.createService({
@@ -51,7 +52,12 @@ export class UserService implements Microservice {
                 deleteAdmin: ctx => adminCtrl.delete(ctx),
                 getAdmin   : ctx => adminCtrl.getOne(ctx),
                 getAllAdmin: ctx => adminCtrl.getAll(ctx),
-            }
+
+                // Generate token user
+                generateNewToken: ctx => userCtrl.generateNewToken(ctx),
+                getUser   : ctx => userCtrl.getOne(ctx),
+            },
+
         });
 
         // graceful shutdown service
