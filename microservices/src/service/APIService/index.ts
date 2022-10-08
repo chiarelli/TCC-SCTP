@@ -1,11 +1,12 @@
 import { ServiceBroker } from "moleculer";
+import web from "moleculer-web";
+import { AuthService } from "../../stub/AuthService";
+import { UserService } from "../../stub/UserService";
 import { Context, Microservice } from "../interfaces";
 import { connect } from "../mongodb-conn";
 import { APIController } from "./controller/APIController";
-import web from "moleculer-web";
-import { UserService } from "../../stub/UserService";
-import { AuthService } from "../../stub/AuthService";
-import { ServiceError } from "../../error/ServiceError";
+
+const E = web.Errors;
 
 export var stubs: {
     userService: UserService,
@@ -32,12 +33,6 @@ export class APIService implements Microservice {
             name: 'api',
             mixins: [web],
 
-            hooks: {
-                before: {
-                    '*': ctx => this.signon(ctx),
-                }
-            },
-
             actions: {
                 createWorkspace: ctx => apiCtrl.createWorkspace(ctx),
                 deleteWorkspace: ctx => apiCtrl.deleteWorkspace(ctx),
@@ -49,6 +44,7 @@ export class APIService implements Microservice {
                 routes: [
                     {
                         path: '/api',
+                        authorization: true,
                         aliases: {
                             // Resource workspace routers
                             'POST workspace': 'api.createWorkspace',
@@ -69,14 +65,21 @@ export class APIService implements Microservice {
                         }
                     },
                     {
-                        path: '/dev',
+                        path: '/api/dev',
                         aliases: {
                             // DEV TESTES
                             'GET checkTokenValid/:token': 'auth.checkTokenValid',
+                            'POST admin': 'api.createAdmin',
+                            'POST user/:id': 'user.generateNewToken',
                         }
                     }
             ]
             },
+
+            methods: {
+                authorize: (ctx, route, req, res) => this.signon(ctx, route, req, res)
+            },
+
         });
 
         // graceful shutdown service
@@ -89,30 +92,25 @@ export class APIService implements Microservice {
         return this.broker.start();
     };
 
-    private async signon(ctx: Context): Promise<void | never> {
+    private async signon(ctx: Context, route: any, req: any, res: any): Promise<void | never> {
+
         try {
-            const token = this.getToken(ctx);
-            if(!token) throw new Error();
-            const data = await stubs.authService.checkTokenValid(token);
-            const uuid = data.owner instanceof Buffer
-                            ? data.owner.toString('hex')
-                            : data.owner;
+            let auth = req.headers["authorization"];
+
+            if(!auth || !auth.startsWith("Bearer") || !auth.slice(7))
+                return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN, null));
+
+            const token = await stubs.authService.checkTokenValid(auth.slice(7));
+            if(!token) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));
+
+            const uuid = token.owner instanceof Buffer
+                            ? token.owner.toString('hex')
+                            : token.owner;
 
             ctx.meta.user = await stubs.userService.getOneUser(uuid);
         } catch (error) {
             console.error(error);
-            throw new ServiceError('401_unauthorized', 401, <Error>error);
-        }
-    }
-
-    private getToken(ctx: Context): string | false {
-        try {
-            const headers = ctx.params.req.rawHeaders;
-            const bearer = headers[headers.indexOf('Authorization')+1];
-            const [, token] = bearer.split(' ');
-            return token
-        } catch (error) {
-            return false;
+            return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));
         }
     }
 
