@@ -1,11 +1,21 @@
 import { ServiceBroker } from 'moleculer';
+import { AuthService } from '../../stub/AuthService';
 import { Context, Microservice } from '../interfaces';
 import { connect } from '../mongodb-conn';
 import { AdminCtrlSingleton, WorkspaceCtrlSingleton } from './user-factories';
 
+export var stubs: {
+    authService: AuthService,
+};
+
 export class UserService implements Microservice {
 
-    constructor(private broker: ServiceBroker) { }
+    constructor(private broker: ServiceBroker) {
+        stubs = {
+            authService: new AuthService(this.broker),
+        };
+        Object.freeze(stubs);
+    }
 
     async register() {
         // Connect MongoDB
