@@ -4,17 +4,18 @@ import { Context, Microservice } from '../interfaces';
 import { connect } from '../mongodb-conn';
 import { AdminCtrlSingleton, UserCtrlSingleton, WorkspaceCtrlSingleton } from './user-factories';
 
-export var stubs: {
-    authService: AuthService,
-};
-
 export class UserService implements Microservice {
 
+    public static stubs: {
+        authService: AuthService,
+    };
+
     constructor(private broker: ServiceBroker) {
-        stubs = {
-            authService: new AuthService(this.broker),
-        };
-        Object.freeze(stubs);
+        if(!UserService.stubs) {
+            UserService.stubs = {
+                authService: new AuthService(this.broker),
+            };
+        }
     }
 
     async register() {

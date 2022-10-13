@@ -1,6 +1,6 @@
 import { Model } from "mongoose";
 import uuidToHex from "uuid-to-hex";
-import { stubs } from "..";
+import { UserService } from "..";
 import { ServiceError } from "../../../error/ServiceError";
 import { CollectionUtilities } from "../../CollectionUtilities";
 import { Statuses } from "../../enums";
@@ -10,10 +10,10 @@ import { AbsDoc } from "../interfaces";
 import { DocumentUserType } from "./user-schema";
 
 export abstract class AbstractModel<T> {
-    protected stubs: typeof stubs;
+    protected stubs;
 
     constructor(protected Model: Model<T>) {
-        this.stubs = stubs;
+        this.stubs = UserService.stubs;
     };
 
     abstract checkPermission(permision: Permission): Promise<boolean>;

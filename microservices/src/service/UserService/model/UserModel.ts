@@ -1,5 +1,5 @@
 import { UUID_Utilities } from "../../UUID_Utilities";
-import { stubs } from "..";
+import { UserService } from "..";
 import { AbstractUser, DocumentUserType } from "./user-schema";
 import { Statuses } from "../../enums";
 import { IToken } from "../../interfaces";
@@ -7,12 +7,12 @@ import { ServiceError } from "../../../error/ServiceError";
 
 export class UserModel {
 
-    protected stubs: typeof stubs;
+    protected stubs;
     protected model: typeof AbstractUser;
 
     constructor() {
         this.model = AbstractUser;
-        this.stubs = stubs;
+        this.stubs = UserService.stubs;
     };
 
     async generateNewToken(uuid: string): Promise<IToken> {

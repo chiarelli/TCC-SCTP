@@ -8,18 +8,20 @@ import { APIController } from "./controller/APIController";
 
 const E = web.Errors;
 
-export var stubs: {
-    userService: UserService,
-    authService: AuthService,
-}
-
 export class APIService implements Microservice {
 
+    public static stubs: {
+        userService: UserService,
+        authService: AuthService,
+    };
+
     constructor(private broker: ServiceBroker) {
-        stubs = Object.freeze({
-            authService: new AuthService(this.broker),
-            userService: new UserService(this.broker),
-        });
+        if(!APIService.stubs) {
+            APIService.stubs = {
+                authService: new AuthService(this.broker),
+                userService: new UserService(this.broker),
+            }
+        }
     };
 
     async register() {
@@ -93,6 +95,7 @@ export class APIService implements Microservice {
     };
 
     private async signon(ctx: Context, route: any, req: any, res: any): Promise<void | never> {
+        // console.log(`##### signon ${this.broker.nodeID}`);
 
         try {
             let auth = req.headers["authorization"];
@@ -100,14 +103,17 @@ export class APIService implements Microservice {
             if(!auth || !auth.startsWith("Bearer") || !auth.slice(7))
                 return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN, null));
 
-            const token = await stubs.authService.checkTokenValid(auth.slice(7));
+            const token = await APIService.stubs.authService.checkTokenValid(auth.slice(7));
             if(!token) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));
 
             const uuid = token.owner instanceof Buffer
                             ? token.owner.toString('hex')
                             : token.owner;
 
-            ctx.meta.user = await stubs.userService.getOneUser(uuid);
+            ctx.meta.user = await APIService.stubs.userService.getOneUser(uuid);
+
+            // console.log('##### User logedin ==> ', ctx.meta.user);
+
         } catch (error) {
             console.error(error);
             return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));
