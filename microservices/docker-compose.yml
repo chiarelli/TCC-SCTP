@@ -2,20 +2,60 @@ version: "3.0"
 
 services:
 
+  api:
+    build: .
+    env_file: .env
+    environment:
+      NODEID: "dicid-api"
+      SERVICES: api
+    depends_on:
+      - nats
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    stop_signal: SIGINT
+    restart: always
+
   auth:
     build: .
-    env_file: docker-compose.env
+    env_file: .env
     environment:
-      NODEID: "node-dicid-auth"
+      NODEID: "dicid-auth"
       SERVICES: auth
-  
+    depends_on:
+      - nats
+      - mongo
+    volumes:
+      - .:/app
+    stop_signal: SIGINT
+    restart: always
+
+  user:
+    build: .
+    env_file: .env
+    environment:
+      NODEID: "dicid-user"
+      SERVICES: user
+    depends_on:
+      - nats
+      - mongo
+    volumes:
+      - .:/app
+    stop_signal: SIGINT
+    restart: always
+
   nats:
     image: nats
-
-  redis:
-    image: redis:alpine
+    restart: always
 
   mongo:
-    image: mongo
-    # volumes:
-    #   - ../../db:/data/db
+    image: mvertes/alpine-mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - production_mongodb_data:/data/db
+    restart: always
+
+volumes:
+  production_mongodb_data:
