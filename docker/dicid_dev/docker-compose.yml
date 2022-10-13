@@ -7,6 +7,8 @@ services:
       context: ../..
       dockerfile: ./docker/dicid_dev/Dockerfile
     env_file: .env
+    depends_on:
+      - nats
     environment:
       NODEID: "dicid-api"
       SERVICES: api
@@ -21,6 +23,9 @@ services:
       context: ../..
       dockerfile: ./docker/dicid_dev/Dockerfile
     env_file: .env
+    depends_on:
+      - nats
+      - mongo
     environment:
       NODEID: "dicid-auth"
       SERVICES: auth
@@ -36,6 +41,9 @@ services:
     environment:
       NODEID: "dicid-user"
       SERVICES: user
+    depends_on:
+      - nats
+      - mongo
     volumes:
       - ../../microservices:/app
     stop_signal: SIGINT
