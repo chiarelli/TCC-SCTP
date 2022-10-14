@@ -38,7 +38,7 @@ export class TokenModel {
     }
 
     async deleteOwnerTokens(owner: Buffer) {
-        return Token.find({ owner }).remove().exec();
+        return Token.deleteMany({ owner });
     }
 
     async getOne(token_uuid: string): Promise<DocumentTokenType|null> {
