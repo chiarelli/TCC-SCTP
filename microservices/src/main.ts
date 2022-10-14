@@ -1,14 +1,16 @@
 import { AvailableServices, MicroserviceConstructor } from './service/interfaces';
 import { APIService } from './service/APIService';
-import { ServiceBrokerDefaultFactory as brokerDefault } from './service/factories';
+import { ServiceBrokerDefaultFactory } from './service/factories';
 import { UserService } from './service/UserService';
 import { AuthService } from './service/AuthService';
 
 class Services {
 
-  static readonly requestedServices: Array<string> = process.env.SERVICES?.split('|') || [];
+  private static readonly requestedServices: Array<string> = process.env.SERVICES?.split('|') || [];
 
-  static readonly availableServices: AvailableServices = {
+  private static readonly getBroker = ServiceBrokerDefaultFactory.getNewInstance;
+
+  private static readonly availableServices: AvailableServices = {
     api: APIService,
     user: UserService,
     auth: AuthService,
@@ -17,7 +19,7 @@ class Services {
   private services: Array<Function> = [];
 
   addService(serviceClass: MicroserviceConstructor) {
-    this.services.push(() => (new serviceClass(brokerDefault.getNewInstance())).register());
+    this.services.push(() => (new serviceClass(Services.getBroker())).register());
   }
 
   start() {
