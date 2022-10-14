@@ -30,6 +30,7 @@
     "cbor-x": "^1.4.1",
     "generate-password": "^1.7.0",
     "hex-to-uuid": "^1.1.1",
+    "lru-cache": "^7.14.0",
     "moleculer": "^0.14.23",
     "moleculer-web": "^0.10.4",
     "mongoose": "^6.6.1",

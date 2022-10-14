@@ -9,6 +9,17 @@ export class ServiceBrokerDefaultFactory {
             transporter: process.env.TRANSPORTER || '',
             serializer: process.env.SERIALIZER || '',
             logLevel: <LogLevels>(process.env.LOGLEVEL || ''),
+            cacher: {
+                type: "MemoryLRU",
+                options: {
+                    // Maximum items
+                    max: 100,
+                    // Time-to-Live
+                    // ttl: 3
+                    // Max params length
+                    maxParamsLength: 60
+                }
+            },
             requestTimeout: 2 * 1000,
             // hotReload: true,
             tracking: {
@@ -28,5 +39,5 @@ export class ServiceBrokerDefaultFactory {
             }
         });
     }
-    
+
 }
