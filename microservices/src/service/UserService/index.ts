@@ -36,7 +36,12 @@ export class UserService implements Microservice {
                     '*': [ (ctx: Context) => ctx.user = ctx.meta.user ],
                     '*Workspace': [ (ctx: Context) => wksCrtl.checkPermission(ctx) ],
                     // '*Admin': [ (ctx: Context) => adminCtrl.checkPermission(ctx) ],
-                }
+                },
+
+                after: {
+                    'update*': [ (ctx, res) => this.cleanCacheWriteUser(ctx, res) ],
+                    'delete*': [ (ctx, res) => this.cleanCacheWriteUser(ctx, res) ],
+                },
             },
 
             actions: {
@@ -69,6 +74,14 @@ export class UserService implements Microservice {
 
         // Start the broker
         return this.broker.start();
+    }
+
+    cleanCacheWriteUser(ctx: Context, user: any) {
+        if(user) {
+            this.broker.broadcast('cacher.clean.users');
+            this.broker.broadcast('cacher.clean.user', { user });
+        }
+        return user;
     }
 
 }

@@ -2,7 +2,7 @@ import { ServiceBroker } from "moleculer";
 import web from "moleculer-web";
 import { AuthService } from "../../stub/AuthService";
 import { UserService } from "../../stub/UserService";
-import { Context, Microservice } from "../interfaces";
+import { Context, IToken, IUser, Microservice } from "../interfaces";
 import { connect } from "../mongodb-conn";
 import { APIController } from "./controller/APIController";
 
@@ -33,6 +33,7 @@ export class APIService implements Microservice {
 
         this.broker.createService({
             name: 'api',
+
             mixins: [web],
 
             actions: {
@@ -40,6 +41,18 @@ export class APIService implements Microservice {
                 deleteWorkspace: ctx => apiCtrl.deleteWorkspace(ctx),
                 createAdmin: ctx => apiCtrl.createAdmin(ctx),
                 deleteAdmin: ctx => apiCtrl.deleteAdmin(ctx),
+                getToken: {
+                    cache: {
+                        keys: ['token_uuid'],
+                    },
+                    handler: ctx => APIService.stubs.authService.checkTokenValid(`${ctx.params.token_uuid}.${ctx.params.secret}`),
+                },
+                getUserLogedin: {
+                    cache: {
+                        keys: ['user_uuid'],
+                    },
+                    handler: ctx => APIService.stubs.userService.getOneUser(ctx.params.user_uuid),
+                }
             },
 
             settings: {
@@ -82,6 +95,11 @@ export class APIService implements Microservice {
                 authorize: (ctx, route, req, res) => this.signon(ctx, route, req, res)
             },
 
+            events: {
+                'cacher.clean.tokens': () => this.broker.cacher?.clean("api.getToken**"),
+                'cacher.clean.user': async ({ user }: {  user: IUser }) => this.broker.cacher?.del(`api.getUserLogedin:${user.uuid}`),
+            },
+
         });
 
         // graceful shutdown service
@@ -103,17 +121,18 @@ export class APIService implements Microservice {
             if(!auth || !auth.startsWith("Bearer") || !auth.slice(7))
                 return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN, null));
 
-            const token = await APIService.stubs.authService.checkTokenValid(auth.slice(7));
+            const [token_uuid, secret] = auth.slice(7).split('.');
+            const token = <IToken | never>await ctx.call('api.getToken', { token_uuid, secret }, { parentCtx: ctx });
+
             if(!token) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));
 
-            const uuid = token.owner instanceof Buffer
+            const user_uuid = token.owner instanceof Buffer
                             ? token.owner.toString('hex')
                             : token.owner;
 
-            ctx.meta.user = await APIService.stubs.userService.getOneUser(uuid);
-
-            // console.log('##### User logedin ==> ', ctx.meta.user);
-
+            ctx.meta.user = <IUser | never>await ctx.call('api.getUserLogedin', { user_uuid }, { parentCtx: ctx })
+            // const obj = await this.broker.cacher?.get(`api.getUserLogedin:${user_uuid}`)
+            // console.log('############ ', obj, user_uuid);
         } catch (error) {
             console.error(error);
             return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));

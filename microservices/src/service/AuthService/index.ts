@@ -7,7 +7,7 @@ export class AuthService implements Microservice {
 
     constructor(private broker: ServiceBroker) { };
 
-    async register() {
+    async register(): Promise<void> {
         // Connect MongoDB
         await connect();
 
@@ -18,6 +18,19 @@ export class AuthService implements Microservice {
         // Define a service
         this.broker.createService({
             name: 'auth',
+
+            hooks: {
+                after: {
+                    deleteOwnerTokens: [
+                        (ctx, res) => {
+                            if(res?.deletedCount)
+                                this.broker.broadcast('cacher.clean.tokens')
+                            return res;
+                        }
+                    ]
+                }
+            },
+
             actions: {
                 checkTokenValid: {
                     params: {
@@ -47,6 +60,7 @@ export class AuthService implements Microservice {
                     handler: ctx => permCtrl.check(ctx),
                 },
             }
+
         });
 
         // graceful shutdown service
