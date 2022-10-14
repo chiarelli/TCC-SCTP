@@ -12,8 +12,6 @@ services:
       - nats
     ports:
       - 3000:3000
-    volumes:
-      - .:/app
     stop_signal: SIGINT
     restart: always
 
@@ -26,8 +24,6 @@ services:
     depends_on:
       - nats
       - mongo
-    volumes:
-      - .:/app
     stop_signal: SIGINT
     restart: always
 
@@ -40,8 +36,6 @@ services:
     depends_on:
       - nats
       - mongo
-    volumes:
-      - .:/app
     stop_signal: SIGINT
     restart: always
 

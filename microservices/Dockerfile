@@ -4,23 +4,23 @@ ENV WEBSERVER=/app
 RUN mkdir $WEBSERVER
 WORKDIR $WEBSERVER
 
+RUN addgroup app \
+   && adduser app -D -H -G app
+
 COPY package*.json ./
+COPY . .
 
 RUN npm install --silent --progress=false --production \
     && npm install typescript \
-    && npm install typescript -g
-
-COPY . .
-RUN tsc
-
-RUN npm remove typescript \
+    && npm install typescript -g \
+    && tsc \
+    && npm remove typescript \
     && npm remove typescript -g \
-    && npm cache clean --force
-
-RUN adduser app --no-create-home --disabled-password
-RUN find $WEBSERVER/. -print | xargs -n 1 -P 100 chown root:app
-RUN find $WEBSERVER/. -type d | xargs -n 1 -P 100 chmod 770
-RUN find $WEBSERVER/. -type f | xargs -n 1 -P 100 chmod 640
+    && npm cache clean --force \
+    && find $WEBSERVER/. -type d | xargs -n 1 -P 100 chown root:app \
+    && find $WEBSERVER/. -type d | xargs -n 1 -P 100 chmod 1770 \
+    && find $WEBSERVER/. -type f | xargs -n 1 -P 100 chown root:root \
+    && find $WEBSERVER/. -type f | xargs -n 1 -P 100 chmod 664
 
 USER app
 
