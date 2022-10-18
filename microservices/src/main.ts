@@ -8,7 +8,7 @@ class Services {
 
   private static readonly requestedServices: Array<string> = process.env.SERVICES?.split('|') || [];
 
-  private static readonly getBroker = ServiceBrokerDefaultFactory.getNewInstance;
+  private static readonly brokerFactory = ServiceBrokerDefaultFactory;
 
   private static readonly availableServices: AvailableServices = {
     api: APIService,
@@ -18,12 +18,12 @@ class Services {
 
   private services: Array<Function> = [];
 
-  addService(serviceClass: MicroserviceConstructor) {
-    this.services.push(() => (new serviceClass(Services.getBroker())).register());
+  addService(serviceClass: MicroserviceConstructor, nodeID: string) {
+    this.services.push(() => (new serviceClass(Services.brokerFactory.getNewInstance(nodeID))).register());
   }
 
   start() {
-    Services.requestedServices.forEach(service => this.addService(Services.availableServices[service]));
+    Services.requestedServices.forEach(service => this.addService(Services.availableServices[service], service));
     this.services.forEach(start => start());
   }
 

@@ -2,10 +2,10 @@ import { LogLevels, ServiceBroker } from "moleculer";
 
 export class ServiceBrokerDefaultFactory {
 
-    static getNewInstance(): ServiceBroker {
+    static getNewInstance(nodeID: string): ServiceBroker {
         return new ServiceBroker({
             namespace: process.env.NAMESPACE || '',
-            nodeID: `${process.env.NODEID}-${process.env.HOSTNAME}`,
+            nodeID: `${nodeID}-${process.env.HOSTNAME}`,
             transporter: process.env.TRANSPORTER || '',
             serializer: process.env.SERIALIZER || '',
             logLevel: <LogLevels>(process.env.LOGLEVEL || ''),
