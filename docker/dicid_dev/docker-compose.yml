@@ -55,5 +55,21 @@ services:
     volumes:
       - mongodb_data:/data/db
 
+  # microservices:
+  #   build:
+  #     context: ../..
+  #     dockerfile: ./docker/dicid_dev/Dockerfile
+  #   env_file: .env
+  #   environment:
+  #     SERVICES: api|auth|user
+  #   ports:
+  #     - 3000:3000
+  #   depends_on:
+  #     - nats
+  #     - mongo
+  #   volumes:
+  #     - ../../microservices:/app
+  #   stop_signal: SIGINT
+
 volumes:
   mongodb_data:
