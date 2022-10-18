@@ -6,7 +6,6 @@ services:
     build: .
     env_file: .env
     environment:
-      NODEID: "dicid-api"
       SERVICES: api
     depends_on:
       - nats
@@ -19,7 +18,6 @@ services:
     build: .
     env_file: .env
     environment:
-      NODEID: "dicid-auth"
       SERVICES: auth
     depends_on:
       - nats
@@ -31,7 +29,6 @@ services:
     build: .
     env_file: .env
     environment:
-      NODEID: "dicid-user"
       SERVICES: user
     depends_on:
       - nats
