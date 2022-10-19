@@ -9,6 +9,11 @@ export class APIController {
         return this.broker.call('user.createAdmin', ctx.params, { parentCtx: ctx });
     }
 
+    async createWorkspace(ctx: Context): Promise<any> {
+        ctx.meta.$statusCode = 201;
+        return this.broker.call('user.createWorkspace', ctx.params, { parentCtx: ctx });
+    }
+
     async deleteAdmin(ctx: Context): Promise<any> {
         try {
             await this.broker.call('user.deleteAdmin', ctx.params, { parentCtx: ctx });
@@ -17,11 +22,6 @@ export class APIController {
         }
         ctx.meta.$statusCode = 204;
         return '';
-    }
-
-    async createWorkspace(ctx: Context): Promise<any> {
-        ctx.meta.$statusCode = 201;
-        return this.broker.call('user.createWorkspace', ctx.params, { parentCtx: ctx });
     }
 
     async deleteWorkspace(ctx: Context): Promise<any> {
