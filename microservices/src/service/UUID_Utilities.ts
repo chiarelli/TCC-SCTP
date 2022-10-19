@@ -3,12 +3,20 @@ import uuidToHex from 'uuid-to-hex';
 import { v5 as uuidv5 } from 'uuid';
 
 export class UUID_Utilities {
+    static formatUUID(str: string): string|false {
+        str = str.replace(/-/g, '');
+        try {
+            return hexToUuid(str);
+        } catch(e) {
+            return false;
+        }
+    }
 
     static generateUUIDv5(name: string, namespace: string | undefined): string {
         var uuid = uuidv5( name, <string>process.env.UUID_NAMESPACE );
         if( namespace ) uuid = uuidv5( uuid, namespace );
         return uuid;
-    };
+    }
 
     static uuidToBuffer(uuid: string): Buffer {
         try {
@@ -21,13 +29,5 @@ export class UUID_Utilities {
         }
     }
 
-    static formatUUID(str: string): string|false {
-        str = str.replace(/-/g, '');
-        try {
-            return hexToUuid(str);
-        } catch(e) {
-            return false;
-        }
-    }
-
+;
 }
