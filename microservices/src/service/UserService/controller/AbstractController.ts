@@ -6,13 +6,21 @@ export abstract class AbstractController<T> {
 
     constructor(protected ctrl: AbstractModel<T>) {}
 
-    async create(ctx: Context) {
-        return this.ctrl.create(ctx.params)
-            .then(model => this.export(model));
+    protected export(model: AbsDoc<T> | null) {
+        if(!model) return false;
+
+        const data = <any>model.toJSON();
+        data.uuid = model.uuid;
+
+        delete data._id;
+        delete data.__v;
+        delete data.kind;
+
+        return data;
     }
 
-    async update(ctx: Context) {
-        return this.ctrl.update(ctx.params.id, ctx.params)
+    async create(ctx: Context) {
+        return this.ctrl.create(ctx.params)
             .then(model => this.export(model));
     }
 
@@ -34,17 +42,8 @@ export abstract class AbstractController<T> {
             .then(model => this.export(model));
     }
 
-    protected export(model: AbsDoc<T> | null) {
-        if(!model) return false;
-
-        const data = <any>model.toJSON();
-        data.uuid = model.uuid;
-
-        delete data._id;
-        delete data.__v;
-        delete data.kind;
-
-        return data;
+    async update(ctx: Context) {
+        return this.ctrl.update(ctx.params.id, ctx.params)
+            .then(model => this.export(model));
     }
-
 }

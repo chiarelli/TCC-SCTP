@@ -18,6 +18,14 @@ export class UserService implements Microservice {
         }
     }
 
+    private cleanCacheWriteUser(ctx: Context, user: any) {
+        if(user) {
+            this.broker.broadcast('cacher.clean.users');
+            this.broker.broadcast('cacher.clean.user', { user });
+        }
+        return user;
+    }
+
     async register() {
         // Connect MongoDB
         await connect();
@@ -75,13 +83,4 @@ export class UserService implements Microservice {
         // Start the broker
         return this.broker.start();
     }
-
-    cleanCacheWriteUser(ctx: Context, user: any) {
-        if(user) {
-            this.broker.broadcast('cacher.clean.users');
-            this.broker.broadcast('cacher.clean.user', { user });
-        }
-        return user;
-    }
-
 }

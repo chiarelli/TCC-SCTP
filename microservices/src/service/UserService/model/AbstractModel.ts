@@ -14,13 +14,6 @@ export abstract class AbstractModel<T> {
 
     constructor(protected Model: Model<T>) {
         this.stubs = UserService.stubs;
-    };
-
-    abstract checkPermission(permision: Permission): Promise<boolean>;
-
-    async create(args: IUser): Promise<AbsDoc<T>> {
-        const model = this.prepareCreate(args);
-        return model.save();
     }
 
     protected  prepareCreate({name, email}: IUser): AbsDoc<T> {
@@ -31,6 +24,23 @@ export abstract class AbstractModel<T> {
             model.createdAt = new Date;
             model.updatedAt = new Date;
             model.status = Statuses.active;
+        return <AbsDoc<T>>model;
+    }
+
+    abstract checkPermission(permision: Permission): Promise<boolean>;
+
+    async create(args: IUser): Promise<AbsDoc<T>> {
+        const model = this.prepareCreate(args);
+        return model.save();
+    }
+
+    async getAll(limit: number, offset: number): Promise<PresentationOfCollections<AbsDoc<T>>> {
+        return CollectionUtilities.find(this.Model, { status: Statuses.active }, limit, offset);
+    }
+
+    async getOne(uuid: string): Promise<AbsDoc<T>> {
+        const model = await this.Model.findOne({ uuid: UUID_Utilities.uuidToBuffer(uuid), status: Statuses.active })
+        if(!model) return Promise.reject(new ServiceError("not_found", 404));
         return <AbsDoc<T>>model;
     }
 
@@ -62,14 +72,5 @@ export abstract class AbstractModel<T> {
         return this.getOne(uuid).then(model => model ? model : Promise.reject(null));
     }
 
-    async getOne(uuid: string): Promise<AbsDoc<T>> {
-        const model = await this.Model.findOne({ uuid: UUID_Utilities.uuidToBuffer(uuid), status: Statuses.active })
-        if(!model) return Promise.reject(new ServiceError("not_found", 404));
-        return <AbsDoc<T>>model;
-    }
-
-    async getAll(limit: number, offset: number): Promise<PresentationOfCollections<AbsDoc<T>>> {
-        return CollectionUtilities.find(this.Model, { status: Statuses.active }, limit, offset);
-    }
-
+;
 }
