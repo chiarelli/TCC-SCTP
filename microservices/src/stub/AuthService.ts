@@ -12,6 +12,10 @@ export class AuthService {
         return this.broker.call('auth.checkPermission', cap);
     }
 
+    async checkTokenValid(token: string): Promise<IToken | never> {
+        return this.broker.call('auth.checkTokenValid', {token});
+    }
+
     async createToken({ owner }: Partial<IToken>): Promise<IToken> {
         return this.broker.call('auth.createToken', { owner });
     }
@@ -19,9 +23,4 @@ export class AuthService {
     async deleteOwnerTokens({ owner }: Partial<IToken>): Promise<ResultDelete> {
         return this.broker.call('auth.deleteOwnerTokens', { owner });
     }
-
-    async checkTokenValid(token: string): Promise<IToken | never> {
-        return this.broker.call('auth.checkTokenValid', {token});
-    }
-
 }

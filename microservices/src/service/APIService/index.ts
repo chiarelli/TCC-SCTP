@@ -22,7 +22,34 @@ export class APIService implements Microservice {
                 userService: new UserService(this.broker),
             }
         }
-    };
+    }
+
+    private async signon(ctx: Context, route: any, req: any, res: any): Promise<void | never> {
+        // console.log(`##### signon ${this.broker.nodeID}`);
+
+        try {
+            let auth = req.headers["authorization"];
+
+            if(!auth || !auth.startsWith("Bearer") || !auth.slice(7))
+                return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN, null));
+
+            const [token_uuid, secret] = auth.slice(7).split('.');
+            const token = <IToken | never>await ctx.call('api.getToken', { token_uuid, secret }, { parentCtx: ctx });
+
+            if(!token) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));
+
+            const user_uuid = token.owner instanceof Buffer
+                            ? token.owner.toString('hex')
+                            : token.owner;
+
+            ctx.meta.user = <IUser | never>await ctx.call('api.getUserLogedin', { user_uuid }, { parentCtx: ctx })
+            // const obj = await this.broker.cacher?.get(`api.getUserLogedin:${user_uuid}`)
+            // console.log('############ ', obj, user_uuid);
+        } catch (error) {
+            console.error(error);
+            return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));
+        }
+    }
 
     async register() {
         // Connect MongoDB
@@ -110,33 +137,6 @@ export class APIService implements Microservice {
 
         // Start the broker
         return this.broker.start();
-    };
-
-    private async signon(ctx: Context, route: any, req: any, res: any): Promise<void | never> {
-        // console.log(`##### signon ${this.broker.nodeID}`);
-
-        try {
-            let auth = req.headers["authorization"];
-
-            if(!auth || !auth.startsWith("Bearer") || !auth.slice(7))
-                return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN, null));
-
-            const [token_uuid, secret] = auth.slice(7).split('.');
-            const token = <IToken | never>await ctx.call('api.getToken', { token_uuid, secret }, { parentCtx: ctx });
-
-            if(!token) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));
-
-            const user_uuid = token.owner instanceof Buffer
-                            ? token.owner.toString('hex')
-                            : token.owner;
-
-            ctx.meta.user = <IUser | never>await ctx.call('api.getUserLogedin', { user_uuid }, { parentCtx: ctx })
-            // const obj = await this.broker.cacher?.get(`api.getUserLogedin:${user_uuid}`)
-            // console.log('############ ', obj, user_uuid);
-        } catch (error) {
-            console.error(error);
-            return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN, null));
-        }
     }
 
 }

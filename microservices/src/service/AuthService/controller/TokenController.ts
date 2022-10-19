@@ -7,23 +7,6 @@ export class TokenController {
 
     constructor(private model: TokenModel) { }
 
-    async checkValid(ctx: Context) {
-        return this.model.valid(ctx.params['token'])
-            .then(token => token
-                ? this.export(token)
-                : Promise.reject( new ServiceError('invalid_token', 400) )
-            );
-    }
-
-    async create(ctx: Context) {
-        return this.model.create(ctx.params)
-            .then(token => this.export(token))
-    }
-
-    async deleteOwnerTokens(ctx: Context) {
-        return this.model.deleteOwnerTokens(ctx.params.owner);
-    }
-
     protected export(token: DocumentTokenType | false | undefined) {
         if(!token) return false;
 
@@ -40,4 +23,20 @@ export class TokenController {
         return data;
     }
 
+    async checkValid(ctx: Context) {
+        return this.model.valid(ctx.params['token'])
+            .then(token => token
+                ? this.export(token)
+                : Promise.reject( new ServiceError('invalid_token', 400) )
+            );
+    }
+
+    async create(ctx: Context) {
+        return this.model.create(ctx.params)
+            .then(token => this.export(token))
+    }
+
+    async deleteOwnerTokens(ctx: Context) {
+        return this.model.deleteOwnerTokens(ctx.params.owner);
+    }
 }

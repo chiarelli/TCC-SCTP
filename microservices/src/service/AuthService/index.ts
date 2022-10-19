@@ -5,7 +5,7 @@ import { PermissionControllerSingleton, TokenControllerSingleton } from './auth-
 
 export class AuthService implements Microservice {
 
-    constructor(private broker: ServiceBroker) { };
+    constructor(private broker: ServiceBroker) { }
 
     async register(): Promise<void> {
         // Connect MongoDB

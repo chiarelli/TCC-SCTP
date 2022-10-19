@@ -9,14 +9,20 @@ const TOKEN_MAX = parseInt(new String(process.env.TOKEN_MAX).toString() || '74')
 const TOKEN_MIN = parseInt(new String(process.env.TOKEN_MIN).toString() || '71');
 
 export class TokenModel {
+    static generatePassword(min: number, max: number) {
+        return generator.generate({
+            length: Math.random() * (max - min) + min,
+            numbers: true
+        });
+    }
 
-    async valid(token: string): Promise<DocumentTokenType|false> {
-        const [uuid, text] = token.split('.');
-        const auth = await this.getOne(uuid);
+    static generateToken(plain_text: string): Promise<string> {
+        let salt = bcryptjs.genSaltSync( Math.round( getRandomArbitrary(8,10) ) );
+        return bcryptjs.hash( plain_text, salt );
+    }
 
-        if(!auth || !await bcryptjs.compare(text || '', auth && auth.hash || '')) return false;
-
-        return auth;
+    static getRandomArbitrary(min: number, max: number): number {
+        return Math.random() * (max - min) + min;
     }
 
     async create({ owner }: Partial<IToken>): Promise<DocumentTokenType> {
@@ -33,10 +39,6 @@ export class TokenModel {
         return token.save();
     }
 
-    async hardDelete(token_uuid: string) {
-        return Token.findOneAndDelete({'uuid': UUID_Utilities.uuidToBuffer(token_uuid) });
-    }
-
     async deleteOwnerTokens(owner: Buffer) {
         return Token.deleteMany({ owner });
     }
@@ -45,20 +47,17 @@ export class TokenModel {
         return Token.findOne({'uuid': UUID_Utilities.uuidToBuffer(token_uuid) });
     }
 
-    static generateToken(plain_text: string): Promise<string> {
-        let salt = bcryptjs.genSaltSync( Math.round( getRandomArbitrary(8,10) ) );
-        return bcryptjs.hash( plain_text, salt );
+    async hardDelete(token_uuid: string) {
+        return Token.findOneAndDelete({'uuid': UUID_Utilities.uuidToBuffer(token_uuid) });
     }
 
-    static getRandomArbitrary(min: number, max: number): number {
-        return Math.random() * (max - min) + min;
-    }
+    async valid(token: string): Promise<DocumentTokenType|false> {
+        const [uuid, text] = token.split('.');
+        const auth = await this.getOne(uuid);
 
-    static generatePassword(min: number, max: number) {
-        return generator.generate({
-            length: Math.random() * (max - min) + min,
-            numbers: true
-        });
+        if(!auth || !await bcryptjs.compare(text || '', auth && auth.hash || '')) return false;
+
+        return auth;
     }
 }
 
