@@ -4,6 +4,8 @@ import { Context, Microservice } from '../interfaces';
 import { connect } from '../mongodb-conn';
 import { AdminCtrlSingleton, UserCtrlSingleton, WorkspaceCtrlSingleton } from './user-factories';
 
+const LIMIT_MAX = process.env.LIMIT_MAX;
+
 export class UserService implements Microservice {
 
     public static stubs: {
@@ -44,6 +46,7 @@ export class UserService implements Microservice {
                     '*': [ (ctx: Context) => ctx.user = ctx.meta.user ],
                     '*Workspace': [ (ctx: Context) => wksCrtl.checkPermission(ctx) ],
                     // '*Admin': [ (ctx: Context) => adminCtrl.checkPermission(ctx) ],
+                    // 'generateNewToken': [ (ctx: Context) => userCtrl.checkPermission(ctx) ],
                 },
 
                 after: {
@@ -58,14 +61,27 @@ export class UserService implements Microservice {
                 updateWorkspace: ctx => wksCrtl.update(ctx),
                 deleteWorkspace: ctx => wksCrtl.delete(ctx),
                 getWorkspace   : ctx => wksCrtl.getOne(ctx),
-                getAllWorkspace: ctx => wksCrtl.getAll(ctx),
+                getAllWorkspace: {
+                    params: {
+                        limit: `number|convert|integer|min:0|max:${LIMIT_MAX}|default:20`,
+                        offset: "number|convert|integer|min:0|default:0"
+                    },
+                    handler: ctx => wksCrtl.getAll(ctx),
+                },
+
 
                 // Resource admin actions
                 createAdmin: ctx => adminCtrl.create(ctx),
                 updateAdmin: ctx => adminCtrl.update(ctx),
                 deleteAdmin: ctx => adminCtrl.delete(ctx),
                 getAdmin   : ctx => adminCtrl.getOne(ctx),
-                getAllAdmin: ctx => adminCtrl.getAll(ctx),
+                getAllAdmin: {
+                    params: {
+                        limit: `number|convert|integer|min:0|max:${LIMIT_MAX}|default:20`,
+                        offset: "number|convert|integer|min:0|default:0"
+                    },
+                    handler: ctx => adminCtrl.getAll(ctx),
+                },
 
                 // Generate token user
                 generateNewToken: ctx => userCtrl.generateNewToken(ctx),
