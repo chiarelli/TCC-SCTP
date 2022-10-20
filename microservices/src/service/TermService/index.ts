@@ -4,10 +4,9 @@ import { UserService } from "../../stub/UserService";
 import { EvaluateStatuses } from "../enums";
 import { Context, Microservice } from "../interfaces";
 import { connect } from "../mongodb-conn";
+import { ListingParam } from "../switchblade";
 import { TermController } from "./controller/TermController";
 import { TermModel } from "./model/TermModel";
-
-const LIMIT_MAX = process.env.LIMIT_MAX;
 
 export class TermService implements Microservice {
 
@@ -95,8 +94,7 @@ export class TermService implements Microservice {
                 getAll: {
                     params: {
                         $$strict: true,
-                        limit: `number|convert|integer|min:0|max:${LIMIT_MAX}|default:20`,
-                        offset: "number|convert|integer|min:0|default:0"
+                        ...ListingParam
                     },
                     handler: ctx => this.termCtrl.getAll(ctx)
                 },
@@ -105,8 +103,7 @@ export class TermService implements Microservice {
                     params: {
                         $$strict: true,
                         search: 'string|min:3',
-                        limit: `number|convert|integer|min:0|max:${LIMIT_MAX}|default:20`,
-                        offset: "number|convert|integer|min:0|default:0"
+                        ...ListingParam
                     },
                     handler: ctx => this.termCtrl.search(ctx)
                 },

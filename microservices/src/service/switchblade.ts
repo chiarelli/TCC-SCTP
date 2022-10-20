@@ -1,0 +1,6 @@
+const LIMIT_MAX = process.env.LIMIT_MAX;
+
+export const ListingParam = {
+    limit: `number|convert|integer|min:0|max:${LIMIT_MAX}|default:20`,
+    offset: "number|convert|integer|min:0|default:0"
+}

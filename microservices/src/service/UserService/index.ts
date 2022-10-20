@@ -2,9 +2,8 @@ import { ServiceBroker } from 'moleculer';
 import { AuthService } from '../../stub/AuthService';
 import { Context, Microservice } from '../interfaces';
 import { connect } from '../mongodb-conn';
+import { ListingParam } from '../switchblade';
 import { AdminCtrlSingleton, UserCtrlSingleton, WorkspaceCtrlSingleton } from './user-factories';
-
-const LIMIT_MAX = process.env.LIMIT_MAX;
 
 export class UserService implements Microservice {
 
@@ -63,8 +62,7 @@ export class UserService implements Microservice {
                 getWorkspace   : ctx => wksCrtl.getOne(ctx),
                 getAllWorkspace: {
                     params: {
-                        limit: `number|convert|integer|min:0|max:${LIMIT_MAX}|default:20`,
-                        offset: "number|convert|integer|min:0|default:0"
+                       ...ListingParam
                     },
                     handler: ctx => wksCrtl.getAll(ctx),
                 },
@@ -77,8 +75,7 @@ export class UserService implements Microservice {
                 getAdmin   : ctx => adminCtrl.getOne(ctx),
                 getAllAdmin: {
                     params: {
-                        limit: `number|convert|integer|min:0|max:${LIMIT_MAX}|default:20`,
-                        offset: "number|convert|integer|min:0|default:0"
+                        ...ListingParam
                     },
                     handler: ctx => adminCtrl.getAll(ctx),
                 },
