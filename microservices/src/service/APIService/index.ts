@@ -67,7 +67,9 @@ export class APIService implements Microservice {
                 createWorkspace: ctx => apiCtrl.createWorkspace(ctx),
                 deleteWorkspace: ctx => apiCtrl.deleteWorkspace(ctx),
                 createAdmin: ctx => apiCtrl.createAdmin(ctx),
+                createTerm: ctx => apiCtrl.createTerm(ctx),
                 deleteAdmin: ctx => apiCtrl.deleteAdmin(ctx),
+                deleteTerm: ctx => apiCtrl.deleteTerm(ctx),
                 getToken: {
                     cache: {
                         keys: ['token_uuid'],
@@ -89,21 +91,36 @@ export class APIService implements Microservice {
                         authorization: true,
                         aliases: {
                             // Resource workspace routers
-                            'POST workspace': 'api.createWorkspace',
-                            'PATCH workspace/:id': 'user.updateWorkspace',
-                            'DELETE workspace/:id': 'api.deleteWorkspace',
-                            'GET workspace/:id': 'user.getWorkspace',
-                            'GET workspace': 'user.getAllWorkspace',
+                            'POST workspaces': 'api.createWorkspace',
+                            'PATCH workspaces/:id': 'user.updateWorkspace',
+                            'DELETE workspaces/:id': 'api.deleteWorkspace',
+                            'GET workspaces/:id': 'user.getWorkspace',
+                            'GET workspaces': 'user.getAllWorkspace',
 
                             // Resource admin routers
-                            'POST admin': 'api.createAdmin',
-                            'PATCH admin/:id': 'user.updateAdmin',
-                            'DELETE admin/:id': 'api.deleteAdmin',
-                            'GET admin/:id': 'user.getAdmin',
-                            'GET admin': 'user.getAllAdmin',
+                            'POST admins': 'api.createAdmin',
+                            'PATCH admins/:id': 'user.updateAdmin',
+                            'DELETE admins/:id': 'api.deleteAdmin',
+                            'GET admins/:id': 'user.getAdmin',
+                            'GET admins': 'user.getAllAdmin',
 
                             // Generate new token route
-                            'POST user/:id': 'user.generateNewToken',
+                            'POST users/:id': 'user.generateNewToken',
+
+                            // Resource term routers
+                            'POST terms': 'api.createTerm',
+                            'GET terms': 'term.getAll',
+                            'DELETE terms/:id': 'api.deleteTerm',
+                            'PATCH terms/:id': 'term.update',
+                            'PATCH terms/evaluate/:id': 'term.evaluate',
+                            'GET terms/:id': 'term.get',
+                        }
+                    },
+                    {
+                        path: '/api/public',
+                        aliases: {
+                            // Resource public term routers
+                            'GET terms': 'term.search',
                         }
                     },
                     {

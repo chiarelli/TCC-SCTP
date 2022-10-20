@@ -1,4 +1,4 @@
-import { ServiceBroker } from "moleculer";
+import { GenericObject, ServiceBroker } from "moleculer";
 import { Context } from "../../interfaces";
 
 export class APIController {
@@ -12,6 +12,11 @@ export class APIController {
     async createWorkspace(ctx: Context): Promise<any> {
         ctx.meta.$statusCode = 201;
         return this.broker.call('user.createWorkspace', ctx.params, { parentCtx: ctx });
+    }
+
+    async createTerm(ctx: Context): Promise<any> {
+        ctx.meta.$statusCode = 201;
+        return this.broker.call('term.create', ctx.params, { parentCtx: ctx });
     }
 
     async deleteAdmin(ctx: Context): Promise<any> {
@@ -34,4 +39,13 @@ export class APIController {
         return '';
     }
 
+    async deleteTerm(ctx: Context) {
+        try {
+            await this.broker.call('term.delete', ctx.params, { parentCtx: ctx });
+        } catch(e) {
+
+        }
+        ctx.meta.$statusCode = 204;
+        return '';
+    }
 }
