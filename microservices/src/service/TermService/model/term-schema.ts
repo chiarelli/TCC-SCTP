@@ -6,7 +6,7 @@ import { ITerm } from "../../interfaces";
 export const TermSchema = new Schema<ITerm>({
     ...AbstractShema.obj,
     author: { type: Buffer, required: true },
-    slug: { type: String, maxLength: 100, unique: true },
+    slug: { type: String, unique: true, lowercase: true, trim: true, maxLength: 100 },
     name: { type: String, trim: true, maxLength: 100 },
     question: { type: String, trim: true, maxLength: 100 },
     description: { type: String, trim: true, maxLength: 600 },
