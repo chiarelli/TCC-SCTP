@@ -7,8 +7,8 @@ const config = { discriminatorKey: 'kind' };
 
 export const UserSchema = new Schema<IUser>({
     ...AbstractShema.obj,
-    name: { type: String, required: true },
-    email: { type: String, unique: true, required: true },
+    name: { type: String, trim: true, required: true },
+    email: { type: String, lowercase: true, trim: true, unique: true, required: true },
     status: { type: String, required: true, enum: Object.values(Statuses) },
     // tokens: [ AbstractShema.obj.uuid ],
 }, config);
