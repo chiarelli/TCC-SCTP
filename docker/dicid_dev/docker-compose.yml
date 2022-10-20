@@ -5,16 +5,33 @@ services:
   api:
     build:
       context: ../..
+      dockerfile: ./docker/dicid_dev/Dockerfile.nginx
+    ports:
+      - 3000:80
+    depends_on:
+      - border
+    networks:
+      - frontend
+      - backend
+
+  border:
+    build:
+      context: ../..
       dockerfile: ./docker/dicid_dev/Dockerfile
     env_file: .env
+    expose:
+      - 3000
     depends_on:
       - nats
     environment:
-      SERVICES: api
-    ports:
-      - 3000:3000
+      SERVICES: border
     volumes:
       - ../../microservices:/app
+    networks:
+      backend:
+        aliases:
+          - borders
+
     stop_signal: SIGINT
 
   auth:
@@ -29,6 +46,8 @@ services:
       SERVICES: auth
     volumes:
       - ../../microservices:/app
+    networks:
+      - backend
     stop_signal: SIGINT
 
   user:
@@ -43,6 +62,8 @@ services:
       - mongo
     volumes:
       - ../../microservices:/app
+    networks:
+      - backend
     stop_signal: SIGINT
 
   term:
@@ -57,10 +78,14 @@ services:
       - mongo
     volumes:
       - ../../microservices:/app
+    networks:
+      - backend
     stop_signal: SIGINT
 
   nats:
     image: nats
+    networks:
+      - backend
 
   mongo:
     image: mongo
@@ -68,6 +93,8 @@ services:
       - 27017:27017
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - backend
 
   # microservices:
   #   build:
@@ -75,7 +102,7 @@ services:
   #     dockerfile: ./docker/dicid_dev/Dockerfile
   #   env_file: .env
   #   environment:
-  #     SERVICES: api|auth|user
+  #     SERVICES: border|auth|user
   #   ports:
   #     - 3000:3000
   #   depends_on:
@@ -87,3 +114,10 @@ services:
 
 volumes:
   mongodb_data:
+
+networks:
+  backend:
+    driver: ipvlan
+    internal: true
+  frontend:
+    internal: false
