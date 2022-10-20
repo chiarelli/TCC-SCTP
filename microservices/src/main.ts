@@ -3,6 +3,7 @@ import { APIService } from './service/APIService';
 import { ServiceBrokerDefaultFactory } from './service/factories';
 import { UserService } from './service/UserService';
 import { AuthService } from './service/AuthService';
+import { TermService } from './service/TermService';
 
 class Services {
 
@@ -14,6 +15,7 @@ class Services {
     api: APIService,
     user: UserService,
     auth: AuthService,
+    term: TermService,
   }
 
   private services: Array<Function> = [];
