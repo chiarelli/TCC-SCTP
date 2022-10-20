@@ -3,7 +3,6 @@ import web from "moleculer-web";
 import { AuthService } from "../../stub/AuthService";
 import { UserService } from "../../stub/UserService";
 import { Context, IToken, IUser, Microservice } from "../interfaces";
-import { connect } from "../mongodb-conn";
 import { APIController } from "./controller/APIController";
 
 const E = web.Errors;
@@ -52,8 +51,6 @@ export class BorderService implements Microservice {
     }
 
     async register() {
-        // Connect MongoDB
-        await connect();
 
         // Define a service
         const apiCtrl = new APIController(this.broker);
