@@ -1,4 +1,4 @@
-import { GenericObject, ServiceBroker } from "moleculer";
+import { ServiceBroker } from "moleculer";
 import { Context } from "../../interfaces";
 
 export class APIController {

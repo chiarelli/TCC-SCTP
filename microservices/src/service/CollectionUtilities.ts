@@ -1,4 +1,4 @@
-import { Model, Query } from "mongoose";
+import { Model } from "mongoose";
 import { PresentationOfCollections, Sort } from "./interfaces";
 
 export class CollectionUtilities {
