@@ -1,6 +1,6 @@
 import { Context as BaseContext, GenericObject, ServiceBroker } from "moleculer";
 import { SortOrder, Types } from "mongoose";
-import { Statuses, UserTypes } from "./enums";
+import { EvaluateStatuses, Statuses, UserTypes } from "./enums";
 
 export interface Microservice {
     register(): Promise<void>;
@@ -19,10 +19,13 @@ export interface IModel {
     updatedAt: Date;
 }
 
-export interface IUser extends IModel {
+export interface IResource extends IModel {
+    status: Statuses,
+}
+
+export interface IUser extends IResource {
     name: string,
     email: string,
-    status: Statuses,
     kind: UserTypes,
 }
 
@@ -30,6 +33,15 @@ export interface IToken extends IModel {
     hash: string;
     owner: Buffer | string;
     _token?: string;
+}
+
+export interface ITerm extends IResource {
+    author: Buffer,
+    slug: string,
+    name: string,
+    question: string,
+    description: string,
+    evaluate: EvaluateStatuses,
 }
 
 export type Context = BaseContext<any, any, GenericObject> & { user?: IUser }
