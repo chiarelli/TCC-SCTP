@@ -8,7 +8,7 @@ import { APIController } from "./controller/APIController";
 
 const E = web.Errors;
 
-export class APIService implements Microservice {
+export class BorderService implements Microservice {
 
     public static stubs: {
         userService: UserService,
@@ -16,8 +16,8 @@ export class APIService implements Microservice {
     };
 
     constructor(private broker: ServiceBroker) {
-        if(!APIService.stubs) {
-            APIService.stubs = {
+        if(!BorderService.stubs) {
+            BorderService.stubs = {
                 authService: new AuthService(this.broker),
                 userService: new UserService(this.broker),
             }
@@ -74,13 +74,13 @@ export class APIService implements Microservice {
                     cache: {
                         keys: ['token_uuid'],
                     },
-                    handler: ctx => APIService.stubs.authService.checkTokenValid(`${ctx.params.token_uuid}.${ctx.params.secret}`),
+                    handler: ctx => BorderService.stubs.authService.checkTokenValid(`${ctx.params.token_uuid}.${ctx.params.secret}`),
                 },
                 getUserLogedin: {
                     cache: {
                         keys: ['user_uuid'],
                     },
-                    handler: ctx => APIService.stubs.userService.getOneUser(ctx.params.user_uuid),
+                    handler: ctx => BorderService.stubs.userService.getOneUser(ctx.params.user_uuid),
                 }
             },
 

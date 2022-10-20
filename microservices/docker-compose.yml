@@ -2,11 +2,11 @@ version: "3.0"
 
 services:
 
-  api:
+  border:
     build: .
     env_file: .env
     environment:
-      SERVICES: api
+      SERVICES: border
     depends_on:
       - nats
     ports:

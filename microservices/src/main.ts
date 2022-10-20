@@ -1,5 +1,5 @@
 import { AvailableServices, MicroserviceConstructor } from './service/interfaces';
-import { APIService } from './service/APIService';
+import { BorderService } from './service/BorderService';
 import { ServiceBrokerDefaultFactory } from './service/factories';
 import { UserService } from './service/UserService';
 import { AuthService } from './service/AuthService';
@@ -12,7 +12,7 @@ class Services {
   private static readonly brokerFactory = ServiceBrokerDefaultFactory;
 
   private static readonly availableServices: AvailableServices = {
-    api: APIService,
+    border: BorderService,
     user: UserService,
     auth: AuthService,
     term: TermService,
