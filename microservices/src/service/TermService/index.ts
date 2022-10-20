@@ -4,7 +4,7 @@ import { UserService } from "../../stub/UserService";
 import { EvaluateStatuses } from "../enums";
 import { Context, Microservice } from "../interfaces";
 import { connect } from "../mongodb-conn";
-import { ListingParam } from "../switchblade";
+import { ListingParams } from "../switchblade";
 import { TermController } from "./controller/TermController";
 import { TermModel } from "./model/TermModel";
 
@@ -94,7 +94,7 @@ export class TermService implements Microservice {
                 getAll: {
                     params: {
                         $$strict: true,
-                        ...ListingParam
+                        ...ListingParams
                     },
                     handler: ctx => this.termCtrl.getAll(ctx)
                 },
@@ -103,7 +103,7 @@ export class TermService implements Microservice {
                     params: {
                         $$strict: true,
                         search: 'string|min:3',
-                        ...ListingParam
+                        ...ListingParams
                     },
                     handler: ctx => this.termCtrl.search(ctx)
                 },
