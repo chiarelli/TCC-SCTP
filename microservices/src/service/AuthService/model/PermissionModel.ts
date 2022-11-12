@@ -60,6 +60,11 @@ ac.grant('admin')
     .updateAny('user')
     .deleteAny('user')
 
+    .createAny('user:admin')
+    .readAny('user:admin')
+    .updateAny('user:admin')
+    .deleteAny('user:admin')
+
     .updateAny('consumer_key:user')
 
     .createAny('term')
