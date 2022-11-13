@@ -102,7 +102,7 @@ export class BorderService implements Microservice {
                             'GET admins': 'user.getAllAdmin',
 
                             // Generate new token route
-                            'POST users/:id': 'user.generateNewToken',
+                            'POST users/token/:id': 'user.generateNewToken',
 
                             // Resource term routers
                             'POST terms': 'api.createTerm',

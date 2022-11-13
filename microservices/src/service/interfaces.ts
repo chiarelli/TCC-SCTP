@@ -29,6 +29,10 @@ export interface IUser extends IResource {
     kind: UserTypes,
 }
 
+export interface IConsumer extends IUser {
+    workspace: typeof Types.ObjectId,
+}
+
 export interface IToken extends IModel {
     hash: string;
     owner: Buffer | string;

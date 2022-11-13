@@ -1,7 +1,7 @@
 import { Document, model, Schema, Types } from 'mongoose';
 import { AbstractShema } from '../../AbstractShema';
 import { Statuses, UserTypes } from '../../enums';
-import { IUser } from '../../interfaces';
+import { IConsumer, IUser } from '../../interfaces';
 
 const config = { discriminatorKey: 'kind' };
 
@@ -24,10 +24,6 @@ export const Workspace = AbstractUser.discriminator<IUser>(UserTypes.workspace, 
 export type DocumentAdminType = DocumentUserType;
 
 export const Admin = AbstractUser.discriminator<IUser>(UserTypes.admin, UserSchema);
-
-export interface IConsumer extends IUser {
-    workspace: typeof Types.ObjectId,
-}
 
 const ConsumerSchema = new Schema<IConsumer>({
     workspace: { ref: 'User', type: Types.ObjectId, required: true }

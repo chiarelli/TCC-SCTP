@@ -45,7 +45,7 @@ export class UserService implements Microservice {
                     '*': [ (ctx: Context) => ctx.user = ctx.meta.user ],
                     '*Workspace': [ (ctx: Context) => wksCrtl.checkPermission(ctx) ],
                     '*Admin': [ (ctx: Context) => adminCtrl.checkPermission(ctx) ],
-                    // 'generateNewToken': [ (ctx: Context) => userCtrl.checkPermission(ctx) ],
+                    'generateNewToken': [ (ctx: Context) => userCtrl.checkPermission(ctx) ],
                 },
 
                 after: {
