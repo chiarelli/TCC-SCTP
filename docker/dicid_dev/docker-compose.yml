@@ -18,6 +18,7 @@ services:
     build:
       context: ../..
       dockerfile: ./docker/dicid_dev/Dockerfile
+    image: dicid_dev
     env_file: .env
     expose:
       - 3000
@@ -38,6 +39,7 @@ services:
     build:
       context: ../..
       dockerfile: ./docker/dicid_dev/Dockerfile
+    image: dicid_dev
     env_file: .env
     depends_on:
       - nats
@@ -54,6 +56,7 @@ services:
     build:
       context: ../..
       dockerfile: ./docker/dicid_dev/Dockerfile
+    image: dicid_dev
     env_file: .env
     environment:
       SERVICES: user
@@ -70,6 +73,7 @@ services:
     build:
       context: ../..
       dockerfile: ./docker/dicid_dev/Dockerfile
+    image: dicid_dev
     env_file: .env
     environment:
       SERVICES: term
@@ -95,6 +99,7 @@ services:
       - mongodb_data:/data/db
     networks:
       - backend
+      - frontend
 
   # microservices:
   #   build:
