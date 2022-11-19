@@ -5,7 +5,7 @@ services:
   api:
     build:
       context: ../..
-      dockerfile: ./docker/dicid_dev/Dockerfile.nginx
+      dockerfile: ./docker/sctp_dev/Dockerfile.nginx
     ports:
       - 3000:80
     depends_on:
@@ -17,8 +17,8 @@ services:
   border:
     build:
       context: ../..
-      dockerfile: ./docker/dicid_dev/Dockerfile
-    image: dicid_dev
+      dockerfile: ./docker/sctp_dev/Dockerfile
+    image: sctp_dev
     env_file: .env
     expose:
       - 3000
@@ -38,8 +38,8 @@ services:
   auth:
     build:
       context: ../..
-      dockerfile: ./docker/dicid_dev/Dockerfile
-    image: dicid_dev
+      dockerfile: ./docker/sctp_dev/Dockerfile
+    image: sctp_dev
     env_file: .env
     depends_on:
       - nats
@@ -55,8 +55,8 @@ services:
   user:
     build:
       context: ../..
-      dockerfile: ./docker/dicid_dev/Dockerfile
-    image: dicid_dev
+      dockerfile: ./docker/sctp_dev/Dockerfile
+    image: sctp_dev
     env_file: .env
     environment:
       SERVICES: user
@@ -72,8 +72,8 @@ services:
   term:
     build:
       context: ../..
-      dockerfile: ./docker/dicid_dev/Dockerfile
-    image: dicid_dev
+      dockerfile: ./docker/sctp_dev/Dockerfile
+    image: sctp_dev
     env_file: .env
     environment:
       SERVICES: term
@@ -104,7 +104,7 @@ services:
   # microservices:
   #   build:
   #     context: ../..
-  #     dockerfile: ./docker/dicid_dev/Dockerfile
+  #     dockerfile: ./docker/sctp_dev/Dockerfile
   #   env_file: .env
   #   environment:
   #     SERVICES: border|auth|user

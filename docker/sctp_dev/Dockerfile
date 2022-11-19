@@ -12,7 +12,7 @@ RUN rm -rf /var/lib/apt/ \
 RUN mkdir /app
 WORKDIR /app
 
-COPY ./docker/dicid_dev/run.sh /
+COPY ./docker/sctp_dev/run.sh /
 RUN chmod +x /run.sh
 
 CMD ["/bin/sh", "/run.sh"]
